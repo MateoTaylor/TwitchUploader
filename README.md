@@ -4,7 +4,8 @@ Twitch.tv is a popular live streaming platform. During 2021, I worked for two mo
 
 This is my current project, which is split into three distinct parts:
 
-TwitchRequests: Currently fetches the top 5 most viewed twitch clips of a specified Twitch category (set to Fortnite at the moment, but can be easily moved to whatever category I'd like) using the Twitch API.
-Unfortunately, the download links to these clips cannot be accessed with the Twitch API, and must instead be scraped from Twitch's dynamic html. I'm currently learning Selenium to achieve this.
+TwitchRequests: Gathers the top 5 (or more) most viewed clips from the last 24 hours of a specified Twitch category (currently Fortnite) using Twitch's API, and then downloads the clips as mp4 using Selenium. (completed)
 
-YoutubeUploader: Uploads video files to the Youtube channel, setting their titles and other parameters. Should be able to upload multiple clips and schedule them. Ideally, this means the youtube account will be able to post roughly 1 clip an hour, given than 24 new clips are loaded every day.
+DaVinciResolveEditor: interacts with the DaVinci resolve api to take clips downloaded from TwitchRequests and edit them into a vertical format suitable for Youtube Shorts content (work in progress)
+
+YoutubeUploader: Uploads video files to the Youtube channel, setting their titles and other parameters. (completed)
