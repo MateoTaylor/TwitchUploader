@@ -10,8 +10,6 @@ from moviepy.editor import VideoFileClip, CompositeVideoClip,concatenate_videocl
 from moviepy.video.fx.resize import resize
 from moviepy.video.fx.crop import crop
 
-#from skimage.filters import gaussian # commented out unless using the blur method on background video.
-
 # optional, import of Youtube API script to auto-upload the downloaded videos
 import YoutubeUpload #youtube upload script modified from https://github.com/davidrazmadzeExtra/YouTube_Python3_Upload_Video
 from googleapiclient.errors import HttpError
@@ -63,7 +61,7 @@ def download_videos(video_data):
         if video["language"] == "en" and int(video["duration"]) >= 10 :
             driver.get(video["url"])
             sleep(0.5)    # XPath method is currently absolute as all clips are contained in the same location, (although I may try to improve this later)
-            xp = "/html/body/div[1]/div/div[1]/div/div[3]/div/div/main/div/div/div[2]/div[1]/div[1]/div/div[2]/div[2]/div/div/div[1]/div/div[2]/video"
+            xp = "//video[contains(@src, 'https://production.assets.clips.twitchcdn.net/')]" #this should grab the video element embedded within the page?
             clipPage = driver.switch_to.active_element.find_element(By.XPATH, xp)
             videoLink = clipPage.get_attribute("src")  # optaining link with Selenium
 
@@ -84,10 +82,10 @@ def title_creator(streamer_name):
     options = [f"I Can't Believe {streamer_name} Did This", f"This Is Why {streamer_name} Is The GOAT",
                f"THIS Is How You Play Fortnite | {streamer_name}", f"{streamer_name} HAS to be stopped",
                f"Why You Should Play Like {streamer_name}", f"THIS is what a PRO looks like / {streamer_name}",
-               f"{streamer_name} Is Bringing OG Fortnite BACK", f"{streamer_name} Pops Off", f"{streamer_name} Just Broke Fortnite",
-               f"Best Fortnite Moments of {current_time.month}/{current_time.day} | {streamer_name}",
-               f"Top Fortnite Clips of {current_time.month}/{current_time.day} | {streamer_name}",
-               f"Top Fortnite Livestreams of {current_time.month}/{current_time.day} | {streamer_name}"]
+               f"{streamer_name} Is Bringing OG Fortnite BACK", f"{streamer_name} Pops Off", f"{streamer_name} Just Broke Fortnite",]
+    #           f"Best Fortnite Moments of {current_time.month}/{current_time.day} | {streamer_name}",
+    #            f"Top Fortnite Clips of {current_time.month}/{current_time.day} | {streamer_name}",
+    #            f"Top Fortnite Livestreams of {current_time.month}/{current_time.day} | {streamer_name}"
     return choice(options)
         
 
@@ -107,14 +105,11 @@ def combine_videos(clip_list):
                         dur += second_clip.duration
             for x in temp:
                 clip_list.remove(x)
+
+                
             combined_clip_list.append(temp)
     return combined_clip_list
                 
-def blur(image): 
-    """ Returns a blurred (radius=8 pixels) version of the image 
-    Source: https://zulko.github.io/moviepy/examples/quick_recipes.html"""  
-    #currently not using this because my laptop is slow, but it is an option and generally looks better  
-    #return gaussian(image.astype(float), sigma=8)
 
 def edit_videos(combined_clip_list):
     '''
@@ -144,9 +139,6 @@ def edit_videos(combined_clip_list):
         background_video = concatenate_videoclips(videofileclip_list)
         background_video_resized = resize(background_video, height = output_height)
 
-
-        #background_video_blurred = background_video_resized.fl_image( blur ) 
-        #commented out because blurring is very resource intensive
 
         #background width now equals background_height*16/9, we want to cut this down to 1080.
         background_video_cropped = crop(background_video_resized, x1=(output_height*(16/9)-1080)/2,x2=(output_height*(16/9)-1080)/2+1080)
